@@ -32,7 +32,12 @@ This repo is intentionally learning-first:
 ## Prerequisites
 
 1. Python 3.11+
-2. ffmpeg installed and available on PATH
+2. ffmpeg available either:
+   - on PATH, or
+   - as a project-local binary in one of:
+     - `./tools/ffmpeg/bin/ffmpeg` (or `ffmpeg.exe` on Windows)
+     - `./ffmpeg/bin/ffmpeg`
+     - `./bin/ffmpeg`
 
 Useful references:
 - https://ffmpeg.org/download.html
@@ -78,6 +83,7 @@ You can override with env vars:
 
 - `BRAD_DATA_DIR`
 - `BRAD_MODELS_DIR`
+- `BRAD_FFMPEG_PATH`
 
 ### Alternate model locations (optional)
 
@@ -97,7 +103,21 @@ Windows PowerShell:
 $env:BRAD_MODELS_DIR="$HOME\.brad\models"
 # optional: keep DB/exports local too
 $env:BRAD_DATA_DIR="$PWD\data"
+# optional: explicit ffmpeg binary
+# $env:BRAD_FFMPEG_PATH="$PWD\tools\ffmpeg\bin\ffmpeg.exe"
 ```
+
+### ffmpeg setup (system or project-local)
+
+Brad checks ffmpeg in this order:
+
+1. `BRAD_FFMPEG_PATH` (if set)
+2. `./tools/ffmpeg/bin/ffmpeg(.exe)`
+3. `./ffmpeg/bin/ffmpeg(.exe)`
+4. `./bin/ffmpeg(.exe)`
+5. `ffmpeg` on PATH
+
+If you want ffmpeg inside the repo, put the binary under `./tools/ffmpeg/bin/`.
 
 ### ASR model folders (faster-whisper / CTranslate2)
 
@@ -146,7 +166,7 @@ brad doctor
 Transcribe:
 
 ```bash
-brad transcribe ./meeting.mp3 --model small --language auto --vad off
+brad transcribe ./samples/sample-3.mp3 --model small --language auto --vad off
 ```
 
 Summarize:
@@ -213,6 +233,10 @@ By default Brad stores runtime data under `~/.brad`:
 By default Brad stores models under `./models/`:
 
 - `./models/` (manually downloaded ASR/LLM model files)
+
+Optional project-local ffmpeg location:
+
+- `./tools/ffmpeg/bin/ffmpeg(.exe)`
 
 ## Architecture and learning docs
 

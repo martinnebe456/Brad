@@ -80,7 +80,11 @@ class BradService:
         collected_segments: list[TranscriptSegment] = []
 
         try:
-            convert_to_mono_16k_wav(audio_file, prepared_wav)
+            convert_to_mono_16k_wav(
+                audio_file,
+                prepared_wav,
+                ffmpeg_path=self.settings.ffmpeg_path,
+            )
             if use_vad:
                 spans = detect_speech_spans(prepared_wav)
                 chunks = build_chunks_from_vad(spans)
@@ -91,7 +95,13 @@ class BradService:
                 else:
                     for index, chunk in enumerate(chunks):
                         chunk_wav = run_dir / f"chunk_{index:04d}.wav"
-                        extract_wav_segment(prepared_wav, chunk_wav, chunk.start, chunk.end)
+                        extract_wav_segment(
+                            prepared_wav,
+                            chunk_wav,
+                            chunk.start,
+                            chunk.end,
+                            ffmpeg_path=self.settings.ffmpeg_path,
+                        )
                         result = backend.transcribe(chunk_wav, language=language)
                         if detected_language is None and result.language:
                             detected_language = result.language

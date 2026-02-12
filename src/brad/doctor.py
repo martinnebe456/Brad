@@ -4,7 +4,7 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
-from brad.audio.ffmpeg import get_ffmpeg_version
+from brad.audio.ffmpeg import get_ffmpeg_version, project_ffmpeg_candidates, resolve_ffmpeg_command
 from brad.config import ASR_MODEL_ALIASES, Settings
 
 
@@ -70,15 +70,31 @@ def _check_llm_path(settings: Settings) -> DoctorCheck:
 def run_doctor(settings: Settings) -> list[DoctorCheck]:
     checks: list[DoctorCheck] = []
 
-    ffmpeg_version = get_ffmpeg_version()
-    if ffmpeg_version:
-        checks.append(DoctorCheck("ffmpeg", "ok", ffmpeg_version))
-    else:
+    if settings.ffmpeg_path is not None and not settings.ffmpeg_path.exists():
         checks.append(
             DoctorCheck(
                 "ffmpeg",
                 "fail",
-                "ffmpeg not found on PATH. Install ffmpeg before running transcription.",
+                f"Configured BRAD_FFMPEG_PATH does not exist: {settings.ffmpeg_path}",
+            )
+        )
+        ffmpeg_version = None
+    else:
+        ffmpeg_version = get_ffmpeg_version(settings.ffmpeg_path)
+
+    if ffmpeg_version:
+        checks.append(DoctorCheck("ffmpeg", "ok", ffmpeg_version))
+    else:
+        local_candidates = ", ".join(str(path) for path in project_ffmpeg_candidates())
+        command = resolve_ffmpeg_command(settings.ffmpeg_path)
+        checks.append(
+            DoctorCheck(
+                "ffmpeg",
+                "fail",
+                "ffmpeg not found. "
+                f"Tried command '{command}'. "
+                f"You can install ffmpeg on PATH, place it in project (candidates: {local_candidates}), "
+                "or set BRAD_FFMPEG_PATH.",
             )
         )
 

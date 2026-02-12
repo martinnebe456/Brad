@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     exports_dir: Path | None = None
     temp_dir: Path | None = None
     db_filename: str = "brad.db"
+    ffmpeg_path: Path | None = None
 
     default_asr_model: str = "small"
     default_language: str = "auto"
