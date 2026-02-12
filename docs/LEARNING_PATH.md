@@ -1,16 +1,17 @@
 # Learning path
 
 This project is intentionally structured so you can extend it step-by-step.
+Created by GPT-5.3-Codex
 
-## LP-01: Implement ONNX backend (core extension)
+## LP-01: Stabilize faster-whisper baseline - DONE
 
-- File: `src/brad/asr/onnx_backend_stub.py`
-- Goal: replace `NotImplementedError` with a working ONNX Runtime pipeline via Optimum.
-- Why: understand backend abstraction and model portability.
+- Files: `src/brad/services.py`, `src/brad/cli.py`, `src/brad/ui/gradio_app.py`
+- Goal: keep a single, stable ASR backend (faster-whisper) across CLI and UI flows.
+- Why: reduce operational complexity and dependency drift.
 - Deliverables:
-  - ONNX backend class implementing `ASRBackend`
-  - CLI option to select backend
-  - Unit test with mocked ONNX pipeline output
+  - single backend path in orchestration
+  - simplified CLI/UI options
+  - regression checks in config/tests
 
 ## LP-02: Add diarization (advanced)
 

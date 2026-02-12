@@ -55,8 +55,6 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 uv pip install -e ".[dev,vad]"
 # Optional local LLM support:
 uv pip install -e ".[llm]"
-# Optional ONNX exercise dependencies:
-uv pip install -e ".[onnx]"
 ```
 
 ### Option B: pip
@@ -67,8 +65,6 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 pip install -e ".[dev,vad]"
 # Optional local LLM support:
 pip install -e ".[llm]"
-# Optional ONNX exercise dependencies:
-pip install -e ".[onnx]"
 ```
 
 ## Model setup (manual, explicit)
@@ -119,9 +115,9 @@ Brad checks ffmpeg in this order:
 
 If you want ffmpeg inside the repo, put the binary under `./tools/ffmpeg/bin/`.
 
-### ASR model folders (faster-whisper / CTranslate2)
+### ASR model folders
 
-Expected local paths:
+Expected local paths for faster-whisper (CTranslate2):
 
 - `./models/faster-whisper/small`
 - `./models/faster-whisper/medium`
@@ -260,7 +256,7 @@ See `SECURITY.md` for threat model and reporting guidance.
 
 1. Harden transcription pipeline and chunking defaults.
 2. Add better SRT formatting and post-processing.
-3. Implement ONNX backend exercise and diarization exercise.
+3. Add diarization exercise.
 4. Add optional semantic search with local embeddings.
 
 ## Changelog
@@ -269,4 +265,4 @@ See `CHANGELOG.md`.
 
 ## License
 
-MIT License. See `LICENSE`.
+GPL-3.0 license. See `LICENSE`.

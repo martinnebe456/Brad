@@ -2,6 +2,14 @@
 
 ## 2026-02-12
 
+- Added safer faster-whisper model initialization:
+  - Tries CUDA first (when selected), then automatically falls back to CPU (`int8`) on init failure.
+  - Adds explicit error details if both attempts fail.
+- Added regression tests for faster-whisper init fallback behavior.
+- Simplified ASR stack to a single backend (`faster-whisper`) for stability.
+- Removed ONNX backend implementation and ONNX-specific tests.
+- Removed ONNX runtime/dependency extras from packaging and install flow.
+- Updated CLI/UI/doctor/docs to match faster-whisper-only behavior.
 - Initial repository scaffold.
 - Implemented local-only MVP pipeline:
   - ffmpeg preprocessing

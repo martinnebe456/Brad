@@ -12,6 +12,8 @@ ASR_MODEL_ALIASES: dict[str, str] = {
     "large": "large-v3",
 }
 
+ASR_BACKENDS: tuple[str, ...] = ("faster-whisper",)
+
 
 class Settings(BaseSettings):
     """Application configuration loaded from environment variables."""

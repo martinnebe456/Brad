@@ -40,15 +40,15 @@ def _check_db(settings: Settings) -> DoctorCheck:
 def _check_model_paths(settings: Settings) -> list[DoctorCheck]:
     checks: list[DoctorCheck] = []
     for alias in ASR_MODEL_ALIASES:
-        model_dir = settings.resolve_asr_model_path(alias)
-        if model_dir.exists():
-            checks.append(DoctorCheck(f"ASR model ({alias})", "ok", f"Found: {model_dir}"))
+        faster_dir = settings.resolve_asr_model_path(alias)
+        if faster_dir.exists():
+            checks.append(DoctorCheck(f"ASR model faster-whisper ({alias})", "ok", f"Found: {faster_dir}"))
         else:
             checks.append(
                 DoctorCheck(
-                    f"ASR model ({alias})",
+                    f"ASR model faster-whisper ({alias})",
                     "warn",
-                    f"Missing: {model_dir} (manual download required; no auto-download).",
+                    f"Missing: {faster_dir} (manual download required; no auto-download).",
                 )
             )
     return checks

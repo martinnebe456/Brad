@@ -13,7 +13,7 @@
        v
 [ASR]
   - primary: faster-whisper (CTranslate2)
-  - optional future: ONNX Runtime backend
+  - optional future: diarization-aware transcription flow
        |
        v
 [Postprocess]

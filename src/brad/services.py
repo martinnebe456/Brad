@@ -68,7 +68,6 @@ class BradService:
                 f"Model path not found: {model_path}\n"
                 "Brad will not auto-download models. Download manually and rerun."
             )
-
         backend = FasterWhisperBackend(
             model_path=model_path,
             compute_type=self.settings.default_compute_type,
@@ -126,7 +125,7 @@ class BradService:
         meeting_id = self.db.create_meeting(
             source_path=str(audio_file.resolve()),
             language=detected_language or (language if language != "auto" else "unknown"),
-            model_name=model_name,
+            model_name=f"faster-whisper:{model_name}",
             duration_seconds=duration_seconds,
         )
         self.db.add_segments(meeting_id, collected_segments)

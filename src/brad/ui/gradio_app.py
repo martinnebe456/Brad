@@ -13,7 +13,12 @@ from brad.services import BradService
 def build_app() -> gr.Blocks:
     service = BradService()
 
-    def do_transcribe(audio_path: str | None, model: str, language: str, use_vad: bool):
+    def do_transcribe(
+        audio_path: str | None,
+        model: str,
+        language: str,
+        use_vad: bool,
+    ):
         if not audio_path:
             return "", "Upload an audio file first.", ""
         try:
