@@ -307,4 +307,4 @@ See `CHANGELOG.md`.
 
 ## License
 
-MIT License. See `LICENSE`.
+GPL-3.0 license. See `LICENSE`.
