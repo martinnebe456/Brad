@@ -13,12 +13,19 @@ from brad.services import BradService
 def build_app() -> gr.Blocks:
     service = BradService()
 
-    def do_transcribe(audio_path: str | None, model: str, language: str, use_vad: bool):
+    def do_transcribe(
+        audio_path: str | None,
+        backend: str,
+        model: str,
+        language: str,
+        use_vad: bool,
+    ):
         if not audio_path:
             return "", "Upload an audio file first.", ""
         try:
             outcome = service.transcribe_file(
                 Path(audio_path),
+                backend_name=backend,
                 model_name=model,
                 language=language,
                 use_vad=use_vad,
@@ -71,6 +78,11 @@ def build_app() -> gr.Blocks:
 
         with gr.Tab("Transcribe"):
             audio_input = gr.File(label="Audio file", type="filepath")
+            backend = gr.Dropdown(
+                choices=["faster-whisper", "onnx"],
+                value="faster-whisper",
+                label="ASR backend",
+            )
             model = gr.Dropdown(choices=["small", "medium", "large"], value="small", label="ASR model")
             language = gr.Dropdown(choices=["auto", "cs", "en"], value="auto", label="Language")
             use_vad = gr.Checkbox(value=False, label="Use Silero VAD")
@@ -81,7 +93,7 @@ def build_app() -> gr.Blocks:
 
             transcribe_button.click(
                 do_transcribe,
-                inputs=[audio_input, model, language, use_vad],
+                inputs=[audio_input, backend, model, language, use_vad],
                 outputs=[meeting_id_box, transcript_preview, export_paths],
             )
 

@@ -11,3 +11,9 @@
   - local summarization (llama-cpp optional, extractive fallback)
   - CLI + Gradio UI
 - Added docs, prompts, tests, CI, and AGENTS playbook.
+- Added LP-01 baseline implementation:
+  - ONNX Whisper backend via Optimum + ONNX Runtime
+  - `--backend` selection in CLI transcribe flow (`faster-whisper|onnx`)
+  - ONNX backend wiring in shared service layer and Gradio UI
+  - ONNX provider default set to `auto` (prefer CUDA, fallback CPU)
+  - Unit tests with mocked ONNX pipeline output

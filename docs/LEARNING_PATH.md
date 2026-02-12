@@ -1,8 +1,9 @@
 # Learning path
 
 This project is intentionally structured so you can extend it step-by-step.
+Created by GPT-5.3-Codex
 
-## LP-01: Implement ONNX backend (core extension)
+## LP-01: Implement ONNX backend (core extension) - DONE
 
 - File: `src/brad/asr/onnx_backend_stub.py`
 - Goal: replace `NotImplementedError` with a working ONNX Runtime pipeline via Optimum.

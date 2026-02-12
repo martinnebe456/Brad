@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from brad.audio.ffmpeg import FfmpegError
-from brad.config import get_settings
+from brad.config import ASR_BACKENDS, get_settings
 from brad.doctor import run_doctor
 from brad.services import BradService
 
@@ -43,17 +43,27 @@ def doctor() -> None:
 @app.command()
 def transcribe(
     file_path: Path = typer.Argument(..., exists=True, dir_okay=False, readable=True),
+    backend: str = typer.Option("faster-whisper", "--backend", help="faster-whisper|onnx"),
     model: str = typer.Option("small", "--model", help="small|medium|large"),
     language: str = typer.Option("auto", "--language", help="auto|cs|en"),
     vad: str = typer.Option("off", "--vad", help="on|off"),
 ) -> None:
     """Transcribe local audio and store transcript in SQLite."""
 
+    normalized_backend = backend.strip().lower()
+    if normalized_backend not in ASR_BACKENDS:
+        console.print(
+            f"[red]transcribe failed:[/red] Unsupported backend '{backend}'. "
+            f"Allowed: {', '.join(ASR_BACKENDS)}"
+        )
+        raise typer.Exit(code=2)
+
     use_vad = vad.lower().strip() == "on"
     service = BradService()
     try:
         outcome = service.transcribe_file(
             file_path,
+            backend_name=normalized_backend,
             model_name=model,
             language=language,
             use_vad=use_vad,
