@@ -120,3 +120,14 @@ def test_dependency_install_hint_without_module_name() -> None:
 
     assert "pip install -e '.[onnx]'" in hint
     assert "Missing module:" not in hint
+
+
+def test_dependency_install_hint_mentions_optimum_mismatch() -> None:
+    error = ImportError(
+        "cannot import name '_attention_scale' from 'torch.onnx.symbolic_opset14'"
+    )
+    hint = ONNXWhisperBackend._dependency_install_hint(error)
+
+    assert "pip install -e '.[onnx]'" in hint
+    assert "pip uninstall -y optimum" in hint
+    assert "optimum-onnx[onnxruntime]" in hint

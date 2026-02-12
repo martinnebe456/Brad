@@ -97,7 +97,16 @@ class ONNXWhisperBackend:
 
     @staticmethod
     def _dependency_install_hint(exc: Exception) -> str:
-        message = "ONNX dependencies are missing or incompatible. Install with: pip install -e '.[onnx]'"
+        message = (
+            "ONNX dependencies are missing or incompatible. "
+            "Install with: pip install -e '.[onnx]'"
+        )
+        if isinstance(exc, ImportError) and "_attention_scale" in str(exc):
+            return (
+                f"{message} Detected torch/optimum mismatch. "
+                "Run: pip uninstall -y optimum && "
+                "pip install -U \"optimum-onnx[onnxruntime]\"."
+            )
         missing_name = getattr(exc, "name", None)
         if isinstance(missing_name, str) and missing_name:
             message = f"{message} Missing module: {missing_name}."

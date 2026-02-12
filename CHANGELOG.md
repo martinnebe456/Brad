@@ -7,6 +7,8 @@
 - Improved ONNX backend startup error message:
   - Reports missing/incompatible dependency state.
   - Includes missing module name when available (for example `onnx`).
+  - Adds targeted guidance for torch/optimum `_attention_scale` incompatibility.
+- Switched ONNX optional dependency from legacy `optimum` to `optimum-onnx[onnxruntime]`.
 - Initial repository scaffold.
 - Implemented local-only MVP pipeline:
   - ffmpeg preprocessing
