@@ -116,9 +116,9 @@ Suggested model sources:
 If you use `huggingface-cli`, that is still explicit manual action:
 
 ```bash
-huggingface-cli download Systran/faster-whisper-small --local-dir ./models/faster-whisper/small
-huggingface-cli download Systran/faster-whisper-medium --local-dir ./models/faster-whisper/medium
-huggingface-cli download Systran/faster-whisper-large-v3 --local-dir ./models/faster-whisper/large-v3
+hf download Systran/faster-whisper-small --local-dir ./models/faster-whisper/small
+hf download Systran/faster-whisper-medium --local-dir ./models/faster-whisper/medium
+hf download Systran/faster-whisper-large-v3 --local-dir ./models/faster-whisper/large-v3
 ```
 
 ### Local GGUF model for summarization (optional)
