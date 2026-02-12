@@ -30,11 +30,6 @@ vad = [
 llm = [
   "llama-cpp-python>=0.2.90"
 ]
-onnx = [
-  "onnxruntime>=1.19.2",
-  "optimum-onnx[onnxruntime]>=0.0.2",
-  "onnx>=1.16.1"
-]
 dev = [
   "black>=24.8.0",
   "ruff>=0.6.4",

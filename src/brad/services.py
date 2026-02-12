@@ -7,11 +7,10 @@ from pathlib import Path
 
 from brad.asr.base import TranscriptSegment
 from brad.asr.faster_whisper_backend import FasterWhisperBackend
-from brad.asr.onnx_backend_stub import ONNXWhisperBackend
 from brad.audio.chunking import build_chunks_from_vad
 from brad.audio.ffmpeg import convert_to_mono_16k_wav, extract_wav_segment
 from brad.audio.vad import detect_speech_spans
-from brad.config import ASR_BACKENDS, Settings, get_settings
+from brad.config import Settings, get_settings
 from brad.export import json as json_export
 from brad.export.md import render_markdown
 from brad.export.srt import to_srt
@@ -56,7 +55,6 @@ class BradService:
         self,
         audio_file: Path,
         *,
-        backend_name: str,
         model_name: str,
         language: str,
         use_vad: bool,
@@ -64,35 +62,16 @@ class BradService:
         if not audio_file.exists():
             raise FileNotFoundError(f"Input audio file does not exist: {audio_file}")
 
-        normalized_backend = backend_name.strip().lower()
-        if normalized_backend not in ASR_BACKENDS:
-            raise ValueError(
-                f"Unsupported backend '{backend_name}'. Allowed: {', '.join(ASR_BACKENDS)}"
+        model_path = self.settings.resolve_asr_model_path(model_name)
+        if not model_path.exists():
+            raise FileNotFoundError(
+                f"Model path not found: {model_path}\n"
+                "Brad will not auto-download models. Download manually and rerun."
             )
-
-        if normalized_backend == "faster-whisper":
-            model_path = self.settings.resolve_asr_model_path(model_name)
-            if not model_path.exists():
-                raise FileNotFoundError(
-                    f"Model path not found: {model_path}\n"
-                    "Brad will not auto-download models. Download manually and rerun."
-                )
-            backend = FasterWhisperBackend(
-                model_path=model_path,
-                compute_type=self.settings.default_compute_type,
-            )
-        else:
-            model_path = self.settings.resolve_onnx_model_path(model_name)
-            if not model_path.exists():
-                raise FileNotFoundError(
-                    f"ONNX model path not found: {model_path}\n"
-                    "Export/download the ONNX model manually and rerun."
-                )
-            backend = ONNXWhisperBackend(
-                model_path=model_path,
-                provider=self.settings.onnx_provider,
-                use_cache=False,
-            )
+        backend = FasterWhisperBackend(
+            model_path=model_path,
+            compute_type=self.settings.default_compute_type,
+        )
 
         run_dir = self._temp_run_dir()
         prepared_wav = run_dir / "input_16k.wav"
@@ -146,7 +125,7 @@ class BradService:
         meeting_id = self.db.create_meeting(
             source_path=str(audio_file.resolve()),
             language=detected_language or (language if language != "auto" else "unknown"),
-            model_name=f"{normalized_backend}:{model_name}",
+            model_name=f"faster-whisper:{model_name}",
             duration_seconds=duration_seconds,
         )
         self.db.add_segments(meeting_id, collected_segments)

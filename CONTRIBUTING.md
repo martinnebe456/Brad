@@ -16,7 +16,6 @@ Optional extras:
 
 ```bash
 pip install -e ".[llm]"
-pip install -e ".[onnx]"
 ```
 
 ## Development workflow

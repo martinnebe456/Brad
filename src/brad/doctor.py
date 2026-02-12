@@ -51,29 +51,6 @@ def _check_model_paths(settings: Settings) -> list[DoctorCheck]:
                     f"Missing: {faster_dir} (manual download required; no auto-download).",
                 )
             )
-
-        onnx_dir = settings.resolve_onnx_model_path(alias)
-        if onnx_dir.exists():
-            required = (onnx_dir / "encoder_model.onnx", onnx_dir / "decoder_model.onnx")
-            missing = [str(path.name) for path in required if not path.exists()]
-            if missing:
-                checks.append(
-                    DoctorCheck(
-                        f"ASR model onnx ({alias})",
-                        "warn",
-                        f"Folder exists but missing ONNX files: {', '.join(missing)}",
-                    )
-                )
-            else:
-                checks.append(DoctorCheck(f"ASR model onnx ({alias})", "ok", f"Found: {onnx_dir}"))
-        else:
-            checks.append(
-                DoctorCheck(
-                    f"ASR model onnx ({alias})",
-                    "warn",
-                    f"Missing: {onnx_dir} (manual export/download required; no auto-download).",
-                )
-            )
     return checks
 
 
@@ -88,56 +65,6 @@ def _check_llm_path(settings: Settings) -> DoctorCheck:
     if Path(model_path).exists():
         return DoctorCheck("LLM model", "ok", f"Found: {model_path}")
     return DoctorCheck("LLM model", "warn", f"Configured path missing: {model_path}")
-
-
-def _check_onnx_provider(settings: Settings) -> DoctorCheck:
-    def _normalize(name: str) -> str:
-        lowered = name.strip().lower()
-        if lowered in {"cuda", "cudaexecutionprovider"}:
-            return "CUDAExecutionProvider"
-        if lowered in {"cpu", "cpuexecutionprovider"}:
-            return "CPUExecutionProvider"
-        return name.strip()
-
-    try:
-        import onnxruntime  # type: ignore
-    except Exception:
-        return DoctorCheck(
-            "ONNX Runtime",
-            "warn",
-            "onnxruntime is not installed. ONNX backend will be unavailable.",
-        )
-
-    providers = [str(provider) for provider in onnxruntime.get_available_providers()]
-    configured = settings.onnx_provider.strip() or "auto"
-    configured_lower = configured.lower()
-
-    if configured_lower == "auto":
-        if "CUDAExecutionProvider" in providers:
-            return DoctorCheck(
-                "ONNX Runtime",
-                "ok",
-                "Provider mode=auto, CUDA available. ONNX backend will prefer GPU and fallback to CPU.",
-            )
-        return DoctorCheck(
-            "ONNX Runtime",
-            "warn",
-            "Provider mode=auto, CUDA not available. ONNX backend will use CPU.",
-        )
-
-    requested = [_normalize(item) for item in configured.split(",") if item.strip()]
-    missing = [item for item in requested if item not in providers]
-    if missing:
-        return DoctorCheck(
-            "ONNX Runtime",
-            "warn",
-            f"Configured provider(s) unavailable: {', '.join(missing)}. Available: {', '.join(providers)}.",
-        )
-    return DoctorCheck(
-        "ONNX Runtime",
-        "ok",
-        f"Configured provider(s) available: {configured}.",
-    )
 
 
 def run_doctor(settings: Settings) -> list[DoctorCheck]:
@@ -173,7 +100,6 @@ def run_doctor(settings: Settings) -> list[DoctorCheck]:
 
     compute_status, compute_detail = _detect_compute_mode()
     checks.append(DoctorCheck("Compute mode", compute_status, compute_detail))
-    checks.append(_check_onnx_provider(settings))
     checks.append(_check_db(settings))
     checks.extend(_check_model_paths(settings))
     checks.append(_check_llm_path(settings))

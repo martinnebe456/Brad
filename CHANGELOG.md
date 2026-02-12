@@ -2,13 +2,14 @@
 
 ## 2026-02-12
 
-- Fixed ONNX optional dependency set:
-  - Added `onnx` to `.[onnx]` extras in `pyproject.toml` (required by Optimum ONNX runtime imports).
-- Improved ONNX backend startup error message:
-  - Reports missing/incompatible dependency state.
-  - Includes missing module name when available (for example `onnx`).
-  - Adds targeted guidance for torch/optimum `_attention_scale` incompatibility.
-- Switched ONNX optional dependency from legacy `optimum` to `optimum-onnx[onnxruntime]`.
+- Added safer faster-whisper model initialization:
+  - Tries CUDA first (when selected), then automatically falls back to CPU (`int8`) on init failure.
+  - Adds explicit error details if both attempts fail.
+- Added regression tests for faster-whisper init fallback behavior.
+- Simplified ASR stack to a single backend (`faster-whisper`) for stability.
+- Removed ONNX backend implementation and ONNX-specific tests.
+- Removed ONNX runtime/dependency extras from packaging and install flow.
+- Updated CLI/UI/doctor/docs to match faster-whisper-only behavior.
 - Initial repository scaffold.
 - Implemented local-only MVP pipeline:
   - ffmpeg preprocessing
@@ -18,9 +19,3 @@
   - local summarization (llama-cpp optional, extractive fallback)
   - CLI + Gradio UI
 - Added docs, prompts, tests, CI, and AGENTS playbook.
-- Added LP-01 baseline implementation:
-  - ONNX Whisper backend via Optimum + ONNX Runtime
-  - `--backend` selection in CLI transcribe flow (`faster-whisper|onnx`)
-  - ONNX backend wiring in shared service layer and Gradio UI
-  - ONNX provider default set to `auto` (prefer CUDA, fallback CPU)
-  - Unit tests with mocked ONNX pipeline output

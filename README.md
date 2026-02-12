@@ -55,9 +55,6 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 uv pip install -e ".[dev,vad]"
 # Optional local LLM support:
 uv pip install -e ".[llm]"
-# Optional ONNX exercise dependencies:
-uv pip install -e ".[onnx]"
-# Installs ONNX stack: onnx + onnxruntime + optimum-onnx
 ```
 
 ### Option B: pip
@@ -68,9 +65,6 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 pip install -e ".[dev,vad]"
 # Optional local LLM support:
 pip install -e ".[llm]"
-# Optional ONNX exercise dependencies:
-pip install -e ".[onnx]"
-# Installs ONNX stack: onnx + onnxruntime + optimum-onnx
 ```
 
 ## Model setup (manual, explicit)
@@ -86,7 +80,6 @@ You can override with env vars:
 - `BRAD_DATA_DIR`
 - `BRAD_MODELS_DIR`
 - `BRAD_FFMPEG_PATH`
-- `BRAD_ONNX_PROVIDER`
 
 ### Alternate model locations (optional)
 
@@ -122,14 +115,6 @@ Brad checks ffmpeg in this order:
 
 If you want ffmpeg inside the repo, put the binary under `./tools/ffmpeg/bin/`.
 
-ONNX provider behavior:
-
-- Default: `BRAD_ONNX_PROVIDER=auto` (tries CUDA first, then CPU fallback)
-- Optional override examples:
-  - `BRAD_ONNX_PROVIDER=CUDAExecutionProvider`
-  - `BRAD_ONNX_PROVIDER=CPUExecutionProvider`
-  - `BRAD_ONNX_PROVIDER=CUDAExecutionProvider,CPUExecutionProvider`
-
 ### ASR model folders
 
 Expected local paths for faster-whisper (CTranslate2):
@@ -150,34 +135,6 @@ If you use `huggingface-cli`, that is still explicit manual action:
 hf download Systran/faster-whisper-small --local-dir ./models/faster-whisper/small
 hf download Systran/faster-whisper-medium --local-dir ./models/faster-whisper/medium
 hf download Systran/faster-whisper-large-v3 --local-dir ./models/faster-whisper/large-v3
-```
-
-Expected local paths for ONNX Whisper (Optimum / ONNX Runtime):
-
-- `./models/onnx-whisper/small`
-- `./models/onnx-whisper/medium`
-- `./models/onnx-whisper/large-v3`
-
-Install all three ONNX Whisper models manually (explicit action):
-
-```bash
-python -m optimum.commands.optimum_cli export onnx -m openai/whisper-small --task automatic-speech-recognition --device cpu ./models/onnx-whisper/small
-python -m optimum.commands.optimum_cli export onnx -m openai/whisper-medium --task automatic-speech-recognition --device cpu ./models/onnx-whisper/medium
-python -m optimum.commands.optimum_cli export onnx -m openai/whisper-large-v3 --task automatic-speech-recognition --device cpu ./models/onnx-whisper/large-v3
-```
-
-Optional GPU export (NVIDIA machine):
-
-```bash
-python -m optimum.commands.optimum_cli export onnx -m openai/whisper-large-v3 --task automatic-speech-recognition --device cuda --dtype fp16 ./models/onnx-whisper/large-v3
-```
-
-Test ONNX backend quickly on local samples:
-
-```bash
-brad transcribe ./samples/sample-short.mp3 --backend onnx --model small --language en --vad off
-brad transcribe ./samples/sample-long.mp3 --backend onnx --model medium --language auto --vad off
-brad transcribe ./samples/sample-long.mp3 --backend onnx --model large --language auto --vad off
 ```
 
 ### Local GGUF model for summarization (optional)
@@ -205,8 +162,7 @@ brad doctor
 Transcribe:
 
 ```bash
-brad transcribe ./samples/sample-3.mp3 --backend faster-whisper --model small --language auto --vad off
-brad transcribe ./samples/sample-3.mp3 --backend onnx --model small --language auto --vad off
+brad transcribe ./samples/sample-3.mp3 --model small --language auto --vad off
 ```
 
 Summarize:
@@ -243,7 +199,7 @@ CPU-focused run:
 
 ```bash
 export BRAD_DEFAULT_COMPUTE_TYPE=int8
-brad transcribe ./meeting.mp3 --backend faster-whisper --model small --language en --vad on
+brad transcribe ./meeting.mp3 --model small --language en --vad on
 ```
 
 GPU-focused run (CUDA machine):
@@ -251,7 +207,7 @@ GPU-focused run (CUDA machine):
 ```bash
 export BRAD_DEFAULT_COMPUTE_TYPE=float16
 export CUDA_VISIBLE_DEVICES=0
-brad transcribe ./meeting.mp3 --backend faster-whisper --model medium --language auto --vad on
+brad transcribe ./meeting.mp3 --model medium --language auto --vad on
 ```
 
 Windows PowerShell equivalent:
@@ -259,7 +215,7 @@ Windows PowerShell equivalent:
 ```powershell
 $env:BRAD_DEFAULT_COMPUTE_TYPE="float16"
 $env:CUDA_VISIBLE_DEVICES="0"
-brad transcribe .\meeting.mp3 --backend faster-whisper --model medium --language auto --vad on
+brad transcribe .\meeting.mp3 --model medium --language auto --vad on
 ```
 
 ## Data layout
@@ -300,7 +256,7 @@ See `SECURITY.md` for threat model and reporting guidance.
 
 1. Harden transcription pipeline and chunking defaults.
 2. Add better SRT formatting and post-processing.
-3. Implement ONNX backend exercise and diarization exercise.
+3. Add diarization exercise.
 4. Add optional semantic search with local embeddings.
 
 ## Changelog

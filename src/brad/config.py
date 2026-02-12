@@ -12,7 +12,7 @@ ASR_MODEL_ALIASES: dict[str, str] = {
     "large": "large-v3",
 }
 
-ASR_BACKENDS: tuple[str, ...] = ("faster-whisper", "onnx")
+ASR_BACKENDS: tuple[str, ...] = ("faster-whisper",)
 
 
 class Settings(BaseSettings):
@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     temp_dir: Path | None = None
     db_filename: str = "brad.db"
     ffmpeg_path: Path | None = None
-    onnx_provider: str = "auto"
 
     default_asr_model: str = "small"
     default_language: str = "auto"
@@ -58,13 +57,6 @@ class Settings(BaseSettings):
             allowed = ", ".join(sorted(ASR_MODEL_ALIASES))
             raise ValueError(f"Unsupported ASR model '{model_name}'. Allowed: {allowed}")
         return self.models_dir / "faster-whisper" / ASR_MODEL_ALIASES[key]
-
-    def resolve_onnx_model_path(self, model_name: str) -> Path:
-        key = model_name.lower().strip()
-        if key not in ASR_MODEL_ALIASES:
-            allowed = ", ".join(sorted(ASR_MODEL_ALIASES))
-            raise ValueError(f"Unsupported ASR model '{model_name}'. Allowed: {allowed}")
-        return self.models_dir / "onnx-whisper" / ASR_MODEL_ALIASES[key]
 
 
 def project_root() -> Path:
