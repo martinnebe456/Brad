@@ -105,3 +105,18 @@ def test_provider_candidates_fallback_to_cpu(monkeypatch, tmp_path: Path) -> Non
         staticmethod(lambda: {"CPUExecutionProvider"}),
     )
     assert backend._provider_candidates() == ["CPUExecutionProvider"]
+
+
+def test_dependency_install_hint_mentions_missing_module() -> None:
+    error = ModuleNotFoundError("No module named 'onnx'", name="onnx")
+    hint = ONNXWhisperBackend._dependency_install_hint(error)
+
+    assert "pip install -e '.[onnx]'" in hint
+    assert "Missing module: onnx." in hint
+
+
+def test_dependency_install_hint_without_module_name() -> None:
+    hint = ONNXWhisperBackend._dependency_install_hint(RuntimeError("boom"))
+
+    assert "pip install -e '.[onnx]'" in hint
+    assert "Missing module:" not in hint

@@ -2,6 +2,11 @@
 
 ## 2026-02-12
 
+- Fixed ONNX optional dependency set:
+  - Added `onnx` to `.[onnx]` extras in `pyproject.toml` (required by Optimum ONNX runtime imports).
+- Improved ONNX backend startup error message:
+  - Reports missing/incompatible dependency state.
+  - Includes missing module name when available (for example `onnx`).
 - Initial repository scaffold.
 - Implemented local-only MVP pipeline:
   - ffmpeg preprocessing

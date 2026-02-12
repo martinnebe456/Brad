@@ -95,15 +95,21 @@ class ONNXWhisperBackend:
             filtered = ["CPUExecutionProvider"]
         return list(dict.fromkeys(filtered or requested))
 
+    @staticmethod
+    def _dependency_install_hint(exc: Exception) -> str:
+        message = "ONNX dependencies are missing or incompatible. Install with: pip install -e '.[onnx]'"
+        missing_name = getattr(exc, "name", None)
+        if isinstance(missing_name, str) and missing_name:
+            message = f"{message} Missing module: {missing_name}."
+        return message
+
     def _load_pipeline(self):
         if self._pipeline is None:
             try:
                 from optimum.onnxruntime import ORTModelForSpeechSeq2Seq  # type: ignore
                 from transformers import AutoProcessor, pipeline  # type: ignore
             except Exception as exc:
-                raise RuntimeError(
-                    "ONNX dependencies are missing. Install with: pip install -e '.[onnx]'"
-                ) from exc
+                raise RuntimeError(self._dependency_install_hint(exc)) from exc
 
             candidates = self._provider_candidates()
             errors: list[str] = []

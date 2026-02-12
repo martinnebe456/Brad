@@ -57,6 +57,7 @@ uv pip install -e ".[dev,vad]"
 uv pip install -e ".[llm]"
 # Optional ONNX exercise dependencies:
 uv pip install -e ".[onnx]"
+# Installs ONNX stack: onnx + onnxruntime + optimum
 ```
 
 ### Option B: pip
@@ -69,6 +70,7 @@ pip install -e ".[dev,vad]"
 pip install -e ".[llm]"
 # Optional ONNX exercise dependencies:
 pip install -e ".[onnx]"
+# Installs ONNX stack: onnx + onnxruntime + optimum
 ```
 
 ## Model setup (manual, explicit)

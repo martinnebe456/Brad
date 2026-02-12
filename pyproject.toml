@@ -32,7 +32,8 @@ llm = [
 ]
 onnx = [
   "onnxruntime>=1.19.2",
-  "optimum>=1.22.0"
+  "optimum>=1.22.0",
+  "onnx>=1.16.1"
 ]
 dev = [
   "black>=24.8.0",
