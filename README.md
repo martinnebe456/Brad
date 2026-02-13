@@ -20,7 +20,7 @@ transcribe -> summarize -> search -> export
 - Local summarization with llama-cpp-python (GGUF), with extractive fallback when no LLM is configured.
 - SQLite storage with FTS5 transcript search.
 - Exports: Markdown, JSON, SRT.
-- Typer CLI, native desktop UI, and optional local web UI.
+- Typer CLI, native desktop UI, optional experimental Kivy UI, and optional local web UI.
 
 ## Project status
 
@@ -65,6 +65,8 @@ source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
 pip install -e ".[dev,vad]"
 # Optional local LLM support:
 pip install -e ".[llm]"
+# Optional experimental Kivy desktop UI:
+pip install -e ".[ui-kivy]"
 ```
 
 ## Model setup (manual, explicit)
@@ -191,6 +193,12 @@ Run desktop UI:
 
 ```bash
 brad ui
+```
+
+Optional experimental Kivy desktop UI:
+
+```bash
+brad ui --mode kivy
 ```
 
 Optional web UI (Gradio):

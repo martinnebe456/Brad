@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-02-13
+
+- Added an experimental Kivy UI bootstrap (`brad ui --mode kivy`) behind optional dependency `.[ui-kivy]`.
+- Extended UI mode parsing/tests to support `kivy` aliases in CLI.
+
 ## 2026-02-12
 
 - Added a native desktop UI (Tkinter) with tabs for transcribe, summarize, search, export, and health checks.

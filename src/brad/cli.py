@@ -19,9 +19,11 @@ def resolve_ui_mode(mode: str) -> str:
     normalized = mode.strip().lower()
     if normalized in {"desktop", "native"}:
         return "desktop"
+    if normalized in {"kivy", "kivy-desktop"}:
+        return "kivy"
     if normalized in {"web", "gradio"}:
         return "web"
-    raise ValueError("Unsupported UI mode. Use: desktop|web")
+    raise ValueError("Unsupported UI mode. Use: desktop|kivy|web")
 
 
 @app.command()
@@ -158,7 +160,7 @@ def search(
 
 @app.command()
 def ui(
-    mode: str = typer.Option("desktop", "--mode", help="desktop|web"),
+    mode: str = typer.Option("desktop", "--mode", help="desktop|kivy|web"),
     host: str = typer.Option("127.0.0.1", "--host"),
     port: int = typer.Option(7860, "--port"),
 ) -> None:
@@ -174,6 +176,16 @@ def ui(
         from brad.ui.desktop_app import launch_desktop_app
 
         launch_desktop_app()
+        return
+
+    if selected_mode == "kivy":
+        try:
+            from brad.ui.kivy_app import launch_kivy_app
+
+            launch_kivy_app()
+        except RuntimeError as exc:
+            console.print(f"[red]ui failed:[/red] {exc}")
+            raise typer.Exit(code=2) from exc
         return
 
     from brad.ui.gradio_app import build_app

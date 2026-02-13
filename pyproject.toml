@@ -30,6 +30,9 @@ vad = [
 llm = [
   "llama-cpp-python>=0.2.90"
 ]
+ui-kivy = [
+  "kivy>=2.3.0"
+]
 dev = [
   "black>=24.8.0",
   "ruff>=0.6.4",

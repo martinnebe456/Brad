@@ -14,6 +14,11 @@ def test_resolve_ui_mode_web_aliases() -> None:
     assert resolve_ui_mode("gradio") == "web"
 
 
+def test_resolve_ui_mode_kivy_aliases() -> None:
+    assert resolve_ui_mode("kivy") == "kivy"
+    assert resolve_ui_mode("kivy-desktop") == "kivy"
+
+
 def test_resolve_ui_mode_rejects_invalid_values() -> None:
-    with pytest.raises(ValueError, match="desktop\\|web"):
+    with pytest.raises(ValueError, match="desktop\\|kivy\\|web"):
         resolve_ui_mode("electron")
