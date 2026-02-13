@@ -20,7 +20,7 @@ transcribe -> summarize -> search -> export
 - Local summarization with llama-cpp-python (GGUF), with extractive fallback when no LLM is configured.
 - SQLite storage with FTS5 transcript search.
 - Exports: Markdown, JSON, SRT.
-- Typer CLI and local Gradio UI.
+- Typer CLI, native desktop UI, and optional local web UI.
 
 ## Project status
 
@@ -187,10 +187,16 @@ brad search "deadline risk"
 brad search "budget" --meeting 1
 ```
 
-Run local UI:
+Run desktop UI:
 
 ```bash
 brad ui
+```
+
+Optional web UI (Gradio):
+
+```bash
+brad ui --mode web
 ```
 
 ## CPU and GPU examples

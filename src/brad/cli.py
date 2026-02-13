@@ -15,6 +15,15 @@ app = typer.Typer(help="Brad - your local AI meeting assistant")
 console = Console()
 
 
+def resolve_ui_mode(mode: str) -> str:
+    normalized = mode.strip().lower()
+    if normalized in {"desktop", "native"}:
+        return "desktop"
+    if normalized in {"web", "gradio"}:
+        return "web"
+    raise ValueError("Unsupported UI mode. Use: desktop|web")
+
+
 @app.command()
 def doctor() -> None:
     """Check local runtime prerequisites."""
@@ -149,10 +158,23 @@ def search(
 
 @app.command()
 def ui(
+    mode: str = typer.Option("desktop", "--mode", help="desktop|web"),
     host: str = typer.Option("127.0.0.1", "--host"),
     port: int = typer.Option(7860, "--port"),
 ) -> None:
-    """Launch local Gradio UI."""
+    """Launch local UI (desktop by default, web optional)."""
+
+    try:
+        selected_mode = resolve_ui_mode(mode)
+    except ValueError as exc:
+        console.print(f"[red]ui failed:[/red] {exc}")
+        raise typer.Exit(code=2) from exc
+
+    if selected_mode == "desktop":
+        from brad.ui.desktop_app import launch_desktop_app
+
+        launch_desktop_app()
+        return
 
     from brad.ui.gradio_app import build_app
 

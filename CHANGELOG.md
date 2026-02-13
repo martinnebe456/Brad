@@ -2,6 +2,9 @@
 
 ## 2026-02-12
 
+- Added a native desktop UI (Tkinter) with tabs for transcribe, summarize, search, export, and health checks.
+- Updated `brad ui` to launch desktop mode by default, with optional web mode via `--mode web`.
+- Added CLI mode parsing tests for desktop/web UI selection.
 - Added safer faster-whisper model initialization:
   - Tries CUDA first (when selected), then automatically falls back to CPU (`int8`) on init failure.
   - Adds explicit error details if both attempts fail.

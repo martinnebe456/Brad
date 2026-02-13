@@ -41,7 +41,8 @@
        v
 [Interfaces]
   - Typer CLI
-  - Gradio local UI
+  - Native desktop UI (Tkinter)
+  - optional Gradio local UI
 ```
 
 ## Runtime design notes
